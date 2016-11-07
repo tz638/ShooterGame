@@ -114,7 +114,7 @@ public class PlayerScript : MonoBehaviour {
         if (bounce) trial = points+(int)Mathf.Floor(-(50.0f - (3.7f - position.x) * 15) / (float)boost);    /* See whether the rapid shooter message should be displayed */
         else trial= points+(int)Mathf.Floor((30.0f - (3.7f - position.x) * 15) / (float)boost);
         
-        if (trial > 1800 && timeLeft > 10) rapidShooter();
+        if (trial > 2500 && timeLeft > 10) rapidShooter();
 
         if (bounce) return (int)Mathf.Floor(-(50.0f - (3.7f - position.x) * 15) / (float)boost);
 
