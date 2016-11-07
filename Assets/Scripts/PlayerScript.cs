@@ -12,20 +12,14 @@ public class Boundary
 
 public class PlayerScript : MonoBehaviour {
 
-    private int points;
-    public float speed;
-    public float loader;
-    public float timeChange;
+    private int points, extra=1;
+    public float speed, loader, timeChange;
     public Boundary boundary;
     public FireScript fire;
-    public float timeLeft;
-    public Text score;
-    public Text time;
-    public Text highScore;
-    public GameObject background;
-    private AudioClip[] sounds;
-    private AudioClip[] sadsounds;
-
+    private float timeLeft;
+    public Text score, time, highScore;
+    public GameObject background, rapid;
+    private AudioClip[] sounds, sadsounds;
 
     // Use this for initialization
     void Start () {
@@ -53,6 +47,12 @@ public class PlayerScript : MonoBehaviour {
             (AudioClip)Resources.Load("Sounds/auh"),
             (AudioClip)Resources.Load("Sounds/thathurts")
         };
+    }
+
+    public float getTimeLeft()
+    {
+
+        return timeLeft;
     }
 
     public void playHappySound()
@@ -109,8 +109,35 @@ public class PlayerScript : MonoBehaviour {
 
     public int calculatePoints(Vector3 position, bool bounce, double boost)
     {
-        if (bounce) return (int)Mathf.Floor(-(50.0f-(3.7f - position.x) * 15) / (float)boost);
-        return (int)Mathf.Floor((30.0f - (3.7f - position.x) * 15) / (float)boost);
+        int trial;
+
+        if (bounce) trial = points+(int)Mathf.Floor(-(50.0f - (3.7f - position.x) * 15) / (float)boost);    /* See whether the rapid shooter message should be displayed */
+        else trial= points+(int)Mathf.Floor((30.0f - (3.7f - position.x) * 15) / (float)boost);
+        
+        if (trial > 1800 && timeLeft > 10) rapidShooter();
+
+        if (bounce) return (int)Mathf.Floor(-(50.0f - (3.7f - position.x) * 15) / (float)boost);
+
+        else
+        {
+            if (points<1800) return (int)Mathf.Floor((30.0f - (3.7f - position.x) * 15) / (float)boost);
+
+            else return extra * (int)Mathf.Floor((30.0f - (3.7f - position.x) * 15) / (float)boost);
+        }
+        
+    }
+
+    void rapidShooter()
+    {
+        if (extra == 2) return; //This has already happened!
+
+        extra = 2;
+        GameObject message = Instantiate(rapid, transform.position, transform.rotation) as GameObject;
+
+        this.gameObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(134,0,204);
+
+        Destroy(message, 1);
+
     }
 
     void OnTriggerEnter2D(Collider2D collider)  

@@ -33,7 +33,7 @@ public class FireScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        scaleFactor = 1 - (60 - player.timeLeft) * 800 / 60000;     /* Math was done to determine the rate of shrinking of the target */
+        scaleFactor = 1 - (60 - player.getTimeLeft()) * 800 / 60000;     /* Math was done to determine the rate of shrinking of the target */
         shoot();
 	}
 
@@ -62,7 +62,7 @@ public class FireScript : MonoBehaviour {
         float y1 = (2.12f * (float)random.NextDouble()) - 0.98f;
         float y2 = (-1.82f * (float)random.NextDouble()) - 2.08f;
         float[] array = { y1, y2 };
-        float y = array[(int)Mathf.Ceil(player.timeLeft) % 2];
+        float y = array[(int)Mathf.Ceil(player.getTimeLeft()) % 2];
 
         tempTarget = Instantiate(target, new Vector3(-5.5f, y, 0.0f), target.transform.rotation) as GameObject;
         

@@ -34,6 +34,7 @@ public class BullsEyeScript : MonoBehaviour {
         GameObject bullseye = GameObject.FindGameObjectWithTag("BE");
         
         int points = character.calculatePoints(character.transform.position, false, fire.getScaleFactor());
+        Debug.Log(points);
         fire.initializeMessage(points, character);
         Destroy(coll);
         Destroy(target);
