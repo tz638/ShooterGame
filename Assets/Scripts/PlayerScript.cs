@@ -12,13 +12,13 @@ public class Boundary
 
 public class PlayerScript : MonoBehaviour {
 
-    private int points, extra=1;
-    public float speed, loader, timeChange;
+    private int points, extra=1, hits=0, shots=0;
+    public float speed, loader, timeChange, slowDown=1;
     public Boundary boundary;
     public FireScript fire;
     private float timeLeft;
     public Text score, time, highScore;
-    public GameObject background, rapid;
+    public GameObject background, rapid, rifle, dead;
     private AudioClip[] sounds, sadsounds;
 
     // Use this for initialization
@@ -47,6 +47,28 @@ public class PlayerScript : MonoBehaviour {
             (AudioClip)Resources.Load("Sounds/auh"),
             (AudioClip)Resources.Load("Sounds/thathurts")
         };
+    }
+
+    public void incrementHits()
+    {
+        hits += 1;
+    }
+
+    public int getHits()
+    {
+        return hits;
+    }
+
+    public void incrementShots()
+    {
+
+        shots += 1;
+    }
+
+    public int getShots()
+    {
+
+        return shots;
     }
 
     public float getTimeLeft()
@@ -91,14 +113,41 @@ public class PlayerScript : MonoBehaviour {
         implementTimer();
         time.text = "Time Left: " + (int)timeLeft;
         if (timeLeft <= 1.0f) endGame();
+        fire = (FireScript)FindObjectOfType(typeof(FireScript));
+    }
 
+    public void removeGun()
+    {
+
+        foreach (Transform child in transform)
+        {
+            if (child.name == "ToyGun")
+            {
+                Destroy(child.gameObject);
+                createRifle();                                
+                return;
+            }
+        }
+    }
+
+    private void createRifle()
+    {
+        GameObject gun;
+        gun = Instantiate(rifle, new Vector3(transform.position.x-2.0f, transform.position.y - 1.8f, transform.position.z), transform.rotation) as GameObject;
+        gun.transform.parent = gameObject.transform;
+    }
+
+    public float getSlowDown()
+    {
+
+        return slowDown;
     }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
         var collObject = collision.gameObject;
 
-        if (collObject.name != "ToyGun") return;
+        if (collObject.name != "ToyGun" && collObject.name != "Rifle") return;
 
         this.GetComponent<CircleCollider2D>().isTrigger = true;
         collObject.GetComponent<BoxCollider2D>().isTrigger = true;
@@ -140,15 +189,22 @@ public class PlayerScript : MonoBehaviour {
 
     }
 
+    public void deadShot()
+    {
+        GameObject message = Instantiate(dead, transform.position, transform.rotation) as GameObject;
+        
+        Destroy(message, 1);
+
+    }
+
     void OnTriggerEnter2D(Collider2D collider)  
-    {                                           
+    {         
         var collObject = collider.gameObject;
         Destroy(collObject);
 
         int points = calculatePoints(transform.position, true, fire.getScaleFactor());
         fire.initializeMessage(points, this);
-
-        //this.GetComponents<AudioSource>()[0].Play();
+        
         playHurtSound();
     }
 
@@ -185,7 +241,7 @@ public class PlayerScript : MonoBehaviour {
     {
         foreach (Transform child in transform)
         {
-            if (child.name == "ToyGun") return true;            
+            if (child.name == "ToyGun" || child.name == "Rifle") return true;            
         }
 
         return false;

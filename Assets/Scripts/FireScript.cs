@@ -78,10 +78,12 @@ public class FireScript : MonoBehaviour {
 
         if (Input.GetButtonDown("Shoot"))
         {
+            player.incrementShots();
 
             AudioSource sound = GetComponent<AudioSource>();
             sound.Play();
-            GetComponent<Animator>().Play("Gun Animation");            
+            if (name=="ToyGun") GetComponent<Animator>().Play("Gun Animation");    
+            else GetComponent<Animator>().Play("Rifle Animation");
 
             GameObject temporaryBullet;
             temporaryBullet = Instantiate(bullet, BulletEmitter.transform.position, BulletEmitter.transform.rotation) as GameObject;
@@ -100,13 +102,13 @@ public class FireScript : MonoBehaviour {
 
         if (points>0)
         {
-            message = Instantiate(text, transform.position, transform.rotation) as GameObject;
+            message = Instantiate(text, transform.parent.position, transform.parent.rotation) as GameObject;
             message.GetComponent<Text>().text = "+" + points.ToString();
         }
 
         else
         {
-            message = Instantiate(text2, transform.position, transform.rotation) as GameObject;
+            message = Instantiate(text2, transform.parent.position, transform.parent.rotation) as GameObject;
             message.GetComponent<Text>().text = points.ToString();
         }        
 
