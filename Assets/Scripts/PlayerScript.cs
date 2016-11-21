@@ -12,13 +12,15 @@ public class Boundary
 
 public class PlayerScript : MonoBehaviour {
 
-    private int points, extra=1, hits=0, shots=0;
+    public int shrink = 0;
+    private int points, extra=1, hits=0, shots=0, dHits=0, isDistanceHitter=0;
     public float speed, loader, timeChange, slowDown=1;
+    private float distance;
     public Boundary boundary;
     public FireScript fire;
     private float timeLeft;
     public Text score, time, highScore;
-    public GameObject background, rapid, rifle, dead;
+    public GameObject background, rapid, rifle, dead, distanceShooter;
     private AudioClip[] sounds, sadsounds;
 
     // Use this for initialization
@@ -49,6 +51,18 @@ public class PlayerScript : MonoBehaviour {
         };
     }
 
+    // Update is called once per frame
+    void Update()
+    {
+
+        move();
+        implementTimer();
+        time.text = "Time Left: " + (int)timeLeft;
+        if (timeLeft <= 1.0f) endGame();
+        fire = (FireScript)FindObjectOfType(typeof(FireScript));
+    }
+
+
     public void incrementHits()
     {
         hits += 1;
@@ -57,6 +71,11 @@ public class PlayerScript : MonoBehaviour {
     public int getHits()
     {
         return hits;
+    }
+
+    public void setHits(int num)
+    {
+        hits=num;
     }
 
     public void incrementShots()
@@ -71,10 +90,38 @@ public class PlayerScript : MonoBehaviour {
         return shots;
     }
 
+    public void setShots(int num)
+    {
+        shots = num;
+    }
+
     public float getTimeLeft()
     {
 
         return timeLeft;
+    }
+
+    public int getDistanceHits()
+    {
+
+        return dHits;
+    }
+
+    public void incrementDistanceHits()
+    {
+
+        dHits++;
+    }
+
+    public void recordPlayerDistance()
+    {
+
+        distance=transform.position.x;
+    }
+
+    public float getPlayerDistance()
+    {
+        return distance;
     }
 
     public void playHappySound()
@@ -105,16 +152,6 @@ public class PlayerScript : MonoBehaviour {
 
         return points;
     }    
-	
-	// Update is called once per frame
-	void Update () {
-
-        move();
-        implementTimer();
-        time.text = "Time Left: " + (int)timeLeft;
-        if (timeLeft <= 1.0f) endGame();
-        fire = (FireScript)FindObjectOfType(typeof(FireScript));
-    }
 
     public void removeGun()
     {
@@ -189,11 +226,22 @@ public class PlayerScript : MonoBehaviour {
 
     }
 
+    public void distanceHitter()
+    {
+        if (isDistanceHitter==1) return; //This has already happened!
+
+        isDistanceHitter = 1;
+        GameObject message = Instantiate(distanceShooter, transform.position, transform.rotation) as GameObject;
+
+        Destroy(message, 1);
+
+    }
+
     public void deadShot()
     {
         GameObject message = Instantiate(dead, transform.position, transform.rotation) as GameObject;
         
-        Destroy(message, 1);
+        Destroy(message, 2);
 
     }
 

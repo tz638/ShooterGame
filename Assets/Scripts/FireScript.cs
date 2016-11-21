@@ -78,7 +78,15 @@ public class FireScript : MonoBehaviour {
 
         if (Input.GetButtonDown("Shoot"))
         {
+            if (player.getHits() != player.getShots())
+            {
+
+                player.setHits(0);
+                player.setShots(0);
+            }
+
             player.incrementShots();
+            player.recordPlayerDistance();
 
             AudioSource sound = GetComponent<AudioSource>();
             sound.Play();

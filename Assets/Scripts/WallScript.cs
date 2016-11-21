@@ -26,7 +26,11 @@ public class WallScript : MonoBehaviour {
         coll.GetComponent<Rigidbody2D>().AddForce(new Vector3(fire.bulletForwardForce/2.5f, 0, 0));
 
         Destroy(coll, 2);
+    }
 
+    public void shrink()
+    {
+            transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y * 0.8f, transform.localScale.z);   
     }
        
 }

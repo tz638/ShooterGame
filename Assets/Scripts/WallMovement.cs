@@ -5,13 +5,11 @@ using System;
 public class WallMovement : MonoBehaviour {
     
     public float down;
-    private PlayerScript player;
 
     // Use this for initialization
     void Start () {
 
         down = 0.05f;
-        player = (PlayerScript)FindObjectOfType(typeof(PlayerScript));
     }
 	
 	// Update is called once per frame
@@ -38,11 +36,9 @@ public class WallMovement : MonoBehaviour {
 
             else if (down > 0 && down < 0.035) down = 0.05f;    /* Don't let the wall move too slowly */
             else if (down < 0 && down > -0.035) down = -0.05f;
-        }
-        
+        }       
 
         transform.Translate(down * Vector3.down);
-
     }
 
 }

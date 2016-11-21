@@ -7,18 +7,20 @@ public class BullsEyeScript : MonoBehaviour {
     
     private PlayerScript character;
     private FireScript fire;
+    private WallScript[] walls;
+
     private int rifle;
     
 
     // Use this for initialization
     void Start () {
-
         
         character = (PlayerScript) FindObjectOfType(typeof(PlayerScript));
         fire = (FireScript)FindObjectOfType(typeof(FireScript));
-        if (fire.name == "Rifle(Clone)") rifle = 1;
-        else rifle = 0;
+        walls = (WallScript[])FindObjectsOfType(typeof(WallScript));
         
+        if (fire.name == "Rifle(Clone)") rifle = 1;
+        else rifle = 0;        
     }
 	
 	// Update is called once per frame
@@ -30,16 +32,30 @@ public class BullsEyeScript : MonoBehaviour {
     {        
         var coll = collision.gameObject;
         if (coll.name != "ToyBullet(Clone)") return;
-
+        
         character.incrementHits();
+        if (character.getPlayerDistance() > 5.0) character.incrementDistanceHits();
 
         character.playHappySound();
 
-        if (character.getHits() > 17 && character.getHits() == character.getShots() && rifle == 0)
+        if (character.getHits() > 15 && character.getHits() == character.getShots() && rifle == 0)
         {
             character.removeGun();
             character.deadShot();
             rifle = 1;
+        }
+
+        if (character.getDistanceHits() > 10 && character.shrink == 0)
+        {
+
+            for (int i=0; i<walls.Length; i++)
+            {
+                WallScript wall = walls[i];
+                wall.shrink();
+            }
+            
+            character.shrink = 1;
+            character.distanceHitter();
         }
 
         GameObject[] targets = GameObject.FindGameObjectsWithTag("Target");
@@ -58,6 +74,7 @@ public class BullsEyeScript : MonoBehaviour {
             GameObject bullseye = bullseyes[i];
             Destroy(bullseye);
         }
+
         fire.initializeTarget();
         
     } 
