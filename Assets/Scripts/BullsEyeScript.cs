@@ -7,10 +7,7 @@ public class BullsEyeScript : MonoBehaviour {
     
     private PlayerScript character;
     private FireScript fire;
-    private WallScript[] walls;
-
-    private int rifle;
-    
+    private WallScript[] walls;    
 
     // Use this for initialization
     void Start () {
@@ -18,9 +15,6 @@ public class BullsEyeScript : MonoBehaviour {
         character = (PlayerScript) FindObjectOfType(typeof(PlayerScript));
         fire = (FireScript)FindObjectOfType(typeof(FireScript));
         walls = (WallScript[])FindObjectsOfType(typeof(WallScript));
-        
-        if (fire.name == "Rifle(Clone)") rifle = 1;
-        else rifle = 0;        
     }
 	
 	// Update is called once per frame
@@ -29,7 +23,8 @@ public class BullsEyeScript : MonoBehaviour {
     }
 
     void OnCollisionEnter2D(Collision2D collision)
-    {        
+    {
+        Debug.Log(character.getDistanceHits());           
         var coll = collision.gameObject;
         if (coll.name != "ToyBullet(Clone)") return;
         
@@ -38,14 +33,16 @@ public class BullsEyeScript : MonoBehaviour {
 
         character.playHappySound();
 
-        if (character.getHits() > 15 && character.getHits() == character.getShots() && rifle == 0)
+
+        /* Check if necessary to activate Dead Shot */
+        if (character.getHits() == 7 && character.getHits() == character.getShots())
         {
             character.removeGun();
             character.deadShot();
-            rifle = 1;
         }
 
-        if (character.getDistanceHits() > 10 && character.shrink == 0)
+        /* Check if necessary to activate Distance Hitter */
+        if (character.getDistanceHits() == 10)
         {
 
             for (int i=0; i<walls.Length; i++)
@@ -54,28 +51,14 @@ public class BullsEyeScript : MonoBehaviour {
                 wall.shrink();
             }
             
-            character.shrink = 1;
             character.distanceHitter();
-        }
-
-        GameObject[] targets = GameObject.FindGameObjectsWithTag("Target");
-        GameObject[] bullseyes = GameObject.FindGameObjectsWithTag("BE");
+            character.setDistanceHits(0);
+        }        
 
         int points = character.calculatePoints(character.transform.position, false, fire.getScaleFactor());
         fire.initializeMessage(points, character);
         Destroy(coll);
-        for (int i=0; i<targets.Length; i++)
-        {
-            GameObject target = targets[i];
-            Destroy(target);
-        }
-        for (int i = 0; i < bullseyes.Length; i++)
-        {
-            GameObject bullseye = bullseyes[i];
-            Destroy(bullseye);
-        }
 
-        fire.initializeTarget();
-        
+        fire.resetTime();        
     } 
 }

@@ -13,11 +13,12 @@ public class Boundary
 public class PlayerScript : MonoBehaviour {
 
     public int shrink = 0;
-    private int points, extra=1, hits=0, shots=0, dHits=0, isDistanceHitter=0;
+    private int points, extra = 1, hits = 0, shots = 0, dHits = 0;
     public float speed, loader, timeChange, slowDown=1;
     private float distance;
     public Boundary boundary;
     public FireScript fire;
+    private ScreenShake shake;
     private float timeLeft;
     public Text score, time, highScore;
     public GameObject background, rapid, rifle, dead, distanceShooter;
@@ -30,6 +31,7 @@ public class PlayerScript : MonoBehaviour {
         loader = 0;
         timeChange = 0;
         fire = (FireScript)FindObjectOfType(typeof(FireScript));
+        shake = (ScreenShake)FindObjectOfType(typeof(ScreenShake));
         timeLeft = 60;
         highScore.text = "High Score: "+PlayerPrefs.GetInt("HighScore").ToString();
 
@@ -105,6 +107,12 @@ public class PlayerScript : MonoBehaviour {
     {
 
         return dHits;
+    }
+
+    public void setDistanceHits(int dhits)
+    {
+
+        dHits=dhits;
     }
 
     public void incrementDistanceHits()
@@ -200,7 +208,7 @@ public class PlayerScript : MonoBehaviour {
         if (bounce) trial = points+(int)Mathf.Floor(-(50.0f - (3.7f - position.x) * 15) / (float)boost);    /* See whether the rapid shooter message should be displayed */
         else trial= points+(int)Mathf.Floor((30.0f - (3.7f - position.x) * 15) / (float)boost);
         
-        if (trial > 2500 && timeLeft > 10) rapidShooter();
+        if (trial > 1800 && timeLeft > 10) rapidShooter();
 
         if (bounce) return (int)Mathf.Floor(-(50.0f - (3.7f - position.x) * 15) / (float)boost);
 
@@ -228,9 +236,6 @@ public class PlayerScript : MonoBehaviour {
 
     public void distanceHitter()
     {
-        if (isDistanceHitter==1) return; //This has already happened!
-
-        isDistanceHitter = 1;
         GameObject message = Instantiate(distanceShooter, transform.position, transform.rotation) as GameObject;
 
         Destroy(message, 1);
@@ -249,6 +254,8 @@ public class PlayerScript : MonoBehaviour {
     {         
         var collObject = collider.gameObject;
         Destroy(collObject);
+
+        shake.StartShake(0.5f, 0.2f);
 
         int points = calculatePoints(transform.position, true, fire.getScaleFactor());
         fire.initializeMessage(points, this);

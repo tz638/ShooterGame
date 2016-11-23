@@ -19,9 +19,9 @@ public class WallMovement : MonoBehaviour {
         double coeff = (0.4 * random.NextDouble() + 0.9);
                            
         // Y axis
-        if (transform.position.y <= -2 || transform.position.y >= -0.47)
+        if (transform.position.y <= -2.6 || transform.position.y >= -0.36)
         {
-            if (transform.position.y <= -2) transform.Translate(0,0.1f,0);
+            if (transform.position.y <= -2.6) transform.Translate(0,0.1f,0);
 
             else transform.Translate(0, -0.1f, 0);
 
