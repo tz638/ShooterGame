@@ -17,6 +17,7 @@ public class FireScript : MonoBehaviour {
     private PlayerScript player;
     private Vector3 originalPosition;
     public GameObject bullsEye;
+    private int previousFrozen = 0;
     
 
     // Use this for initialization
@@ -86,9 +87,26 @@ public class FireScript : MonoBehaviour {
 
         GameObject tempTarget, bullseye;
         System.Random random = new System.Random();
-        
+        float y;       
         float[] array = { 1.28f, 1, 0.7f, -1.02f, -1.32f, -1.71f, -4.53f, -4.23f, -4.09f };
-        float y = array[random.Next(0,array.Length)];
+
+        if (player.getFreeze() == 0)
+        {
+            previousFrozen = 0;
+            y = array[random.Next(0, array.Length)];
+        }
+
+        else
+        {
+            if (previousFrozen==0)
+            {
+                previousFrozen = random.Next(1, 4);                
+            }
+
+            y = array[random.Next(3 * previousFrozen - 3, 3 * previousFrozen)];
+        }   
+        
+         
 
         tempTarget = Instantiate(target, new Vector3(-5.4f, y, 0.0f), target.transform.rotation) as GameObject;
         

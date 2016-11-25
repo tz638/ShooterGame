@@ -12,17 +12,19 @@ public class Boundary
 
 public class PlayerScript : MonoBehaviour {
 
-    public int shrink = 0;
-    private int points, extra = 1, hits = 0, shots = 0, dHits = 0;
+    public int freeze=0;
+    private int points, extra = 1, hits = 0, shots = 0, dHits = 0, hasrifle=0;
     public float speed, loader, timeChange, slowDown=1;
-    private float distance;
+    private float distance, freezeTime=0;
     public Boundary boundary;
     public FireScript fire;
+    public WallMovement wall;
     private ScreenShake shake;
     private float timeLeft;
     public Text score, time, highScore;
-    public GameObject background, rapid, rifle, dead, distanceShooter;
+    public GameObject background, rapid, rifle, dead, distanceShooter, remover;
     private AudioClip[] sounds, sadsounds;
+    private List<float> hitTimes = new List<float>();
 
     // Use this for initialization
     void Start () {
@@ -62,17 +64,38 @@ public class PlayerScript : MonoBehaviour {
         time.text = "Time Left: " + (int)timeLeft;
         if (timeLeft <= 1.0f) endGame();
         fire = (FireScript)FindObjectOfType(typeof(FireScript));
-    }
+        shakeEnd();
 
+        if (freezeTime > 0 && Time.time - freezeTime > 5.0f)
+        {
+            freezeTime = 0;
+            freeze = 0;
+        }
+
+        if (freeze == 0) wall.gameObject.SetActive(true);
+    }
 
     public void incrementHits()
     {
         hits += 1;
+        addHit();
     }
 
     public int getHits()
     {
         return hits;
+    }
+
+    public int hasRifle()
+    {
+
+        return hasrifle;
+    }
+
+    public void setRifle()
+    {
+
+        hasrifle = 1;
     }
 
     public void setHits(int num)
@@ -130,6 +153,12 @@ public class PlayerScript : MonoBehaviour {
     public float getPlayerDistance()
     {
         return distance;
+    }
+
+    public int getFreeze()
+    {
+
+        return freeze;
     }
 
     public void playHappySound()
@@ -230,7 +259,7 @@ public class PlayerScript : MonoBehaviour {
 
         this.gameObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(134,0,204);
 
-        Destroy(message, 1);
+        Destroy(message, 1.2f);
 
     }
 
@@ -238,16 +267,41 @@ public class PlayerScript : MonoBehaviour {
     {
         GameObject message = Instantiate(distanceShooter, transform.position, transform.rotation) as GameObject;
 
-        Destroy(message, 1);
+        Destroy(message, 1.2f);
 
     }
 
     public void deadShot()
     {
         GameObject message = Instantiate(dead, transform.position, transform.rotation) as GameObject;
-        
-        Destroy(message, 2);
+        hasrifle = 1;        
+        Destroy(message, 1.5f);
+    }
 
+    public void wallRemover()
+    {
+        GameObject message = Instantiate(remover, transform.position, transform.rotation) as GameObject;        
+        Destroy(message, 1.5f);
+    }
+
+    public void tryFreeze()
+    {
+        if (hitTimes.Count < 5) return;
+
+        var length = hitTimes.Count;
+
+        for (int i = 0; i<length-4; i++)
+        {
+            if ((hitTimes[i + 4] - hitTimes[i]) > -8.0f)
+            {
+                hitTimes.Clear();
+                freeze = 1;
+                freezeTime = Time.time;
+                wallRemover();
+                return;
+            }
+            else hitTimes.Remove(hitTimes[i]);
+        }
     }
 
     void OnTriggerEnter2D(Collider2D collider)  
@@ -309,7 +363,12 @@ public class PlayerScript : MonoBehaviour {
         {
             background.GetComponent<AudioSource>().Play();
         }
+    }
 
+    public void shakeEnd()
+    {
+
+        if (timeLeft<11.1f && (timeLeft-System.Math.Truncate(timeLeft))<0.03f) shake.StartShake(0.2f, 0.08f);
     }
 
     void endGame()
@@ -319,5 +378,12 @@ public class PlayerScript : MonoBehaviour {
 
         if (high < (int)getPoints())
             PlayerPrefs.SetInt("HighScore", (int)getPoints());
+    }
+
+    public void addHit()
+    {
+        if (freeze == 1) return;
+        float hitTime = timeLeft;
+        hitTimes.Add(hitTime);
     }
 }

@@ -24,18 +24,20 @@ public class BullsEyeScript : MonoBehaviour {
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log(character.getDistanceHits());           
+                   
         var coll = collision.gameObject;
         if (coll.name != "ToyBullet(Clone)") return;
         
-        character.incrementHits();
+        character.incrementHits();               
         if (character.getPlayerDistance() > 5.0) character.incrementDistanceHits();
 
         character.playHappySound();
 
+        /* Check if necessary to activate freeze */
+        character.tryFreeze();
 
         /* Check if necessary to activate Dead Shot */
-        if (character.getHits() == 7 && character.getHits() == character.getShots())
+        if (character.getHits() == 7 && character.getHits() == character.getShots() && character.hasRifle()==0)
         {
             character.removeGun();
             character.deadShot();
@@ -44,7 +46,6 @@ public class BullsEyeScript : MonoBehaviour {
         /* Check if necessary to activate Distance Hitter */
         if (character.getDistanceHits() == 10)
         {
-
             for (int i=0; i<walls.Length; i++)
             {
                 WallScript wall = walls[i];

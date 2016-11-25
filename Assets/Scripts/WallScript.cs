@@ -30,7 +30,6 @@ public class WallScript : MonoBehaviour {
 
     public void shrink()
     {
-            GetComponent<Animator>().Play("Wall Animation");
             transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y * 0.8f, transform.localScale.z);   
     }
        
