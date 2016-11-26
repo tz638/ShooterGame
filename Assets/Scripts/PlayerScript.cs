@@ -23,6 +23,7 @@ public class PlayerScript : MonoBehaviour {
     private float timeLeft;
     public Text score, time, highScore;
     public GameObject background, rapid, rifle, dead, distanceShooter, remover;
+    private GameObject target;
     private AudioClip[] sounds, sadsounds;
     private List<float> hitTimes = new List<float>();
 
@@ -63,7 +64,10 @@ public class PlayerScript : MonoBehaviour {
         implementTimer();
         time.text = "Time Left: " + (int)timeLeft;
         if (timeLeft <= 1.0f) endGame();
+
         fire = (FireScript)FindObjectOfType(typeof(FireScript));
+        target = GameObject.FindGameObjectWithTag("Target");
+
         shakeEnd();
 
         if (freezeTime > 0 && Time.time - freezeTime > 5.0f)
@@ -252,10 +256,10 @@ public class PlayerScript : MonoBehaviour {
 
     void rapidShooter()
     {
-        if (extra == 2) return; //This has already happened!
+        if (extra == 2) return; /* Rapid shooter has already been activated! */
 
         extra = 2;
-        GameObject message = Instantiate(rapid, transform.position, transform.rotation) as GameObject;
+        GameObject message = Instantiate(rapid, fire.gameObject.transform.position, transform.rotation) as GameObject;
 
         this.gameObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(134,0,204);
 
@@ -265,6 +269,8 @@ public class PlayerScript : MonoBehaviour {
 
     public void distanceHitter()
     {
+        if (freeze == 1) return;
+
         GameObject message = Instantiate(distanceShooter, transform.position, transform.rotation) as GameObject;
 
         Destroy(message, 1.2f);
@@ -273,14 +279,14 @@ public class PlayerScript : MonoBehaviour {
 
     public void deadShot()
     {
-        GameObject message = Instantiate(dead, transform.position, transform.rotation) as GameObject;
+        GameObject message = Instantiate(dead, target.transform.position, target.transform.rotation) as GameObject;
         hasrifle = 1;        
         Destroy(message, 1.5f);
     }
 
     public void wallRemover()
     {
-        GameObject message = Instantiate(remover, transform.position, transform.rotation) as GameObject;        
+        GameObject message = Instantiate(remover, wall.gameObject.transform.position, transform.rotation) as GameObject;        
         Destroy(message, 1.5f);
     }
 

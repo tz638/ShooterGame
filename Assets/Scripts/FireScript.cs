@@ -18,12 +18,14 @@ public class FireScript : MonoBehaviour {
     private Vector3 originalPosition;
     public GameObject bullsEye;
     private int previousFrozen = 0;
-    
+    private GameObject canvas;
+
 
     // Use this for initialization
     void Start () {
 
         player = (PlayerScript)FindObjectOfType(typeof(PlayerScript));
+        canvas = GameObject.Find("Canvas");
 
         scaleFactor = 1;  /* Not only used for shrinking, but is also a global variable to boost points with time */
 
@@ -154,13 +156,13 @@ public class FireScript : MonoBehaviour {
 
         if (points>0)
         {
-            message = Instantiate(text, transform.parent.position, transform.parent.rotation) as GameObject;
+            message = Instantiate(text, canvas.transform.position, canvas.transform.rotation) as GameObject;
             message.GetComponent<Text>().text = "+" + points.ToString();
         }
 
         else
         {
-            message = Instantiate(text2, transform.parent.position, transform.parent.rotation) as GameObject;
+            message = Instantiate(text2, canvas.transform.position, canvas.transform.rotation) as GameObject;
             message.GetComponent<Text>().text = points.ToString();
         }        
 
