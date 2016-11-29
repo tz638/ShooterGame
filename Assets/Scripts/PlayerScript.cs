@@ -22,10 +22,11 @@ public class PlayerScript : MonoBehaviour {
     private ScreenShake shake;
     private float timeLeft;
     public Text score, time, highScore;
-    public GameObject background, rapid, rifle, dead, distanceShooter, remover;
+    public GameObject boom, background, rapid, rifle, dead, distanceShooter, remover;
     private GameObject target;
     private AudioClip[] sounds, sadsounds;
     private List<float> hitTimes = new List<float>();
+    private string[] prefArray;
 
     // Use this for initialization
     void Start () {
@@ -53,6 +54,11 @@ public class PlayerScript : MonoBehaviour {
             (AudioClip)Resources.Load("Sounds/ugh"),
             (AudioClip)Resources.Load("Sounds/auh"),
             (AudioClip)Resources.Load("Sounds/thathurts")
+        };
+
+        prefArray = new string[5]
+        {
+            "HighScore5", "HighScore4", "HighScore3", "HighScore2", "HighScore"
         };
     }
 
@@ -380,10 +386,17 @@ public class PlayerScript : MonoBehaviour {
     void endGame()
     {
         SceneManager.LoadScene("Main Menu");
+        boom.GetComponent<AudioSource>().Play();
         var high = PlayerPrefs.GetInt("HighScore", 0);
+        var i = 0;
 
-        if (high < (int)getPoints())
-            PlayerPrefs.SetInt("HighScore", (int)getPoints());
+        while ((int)getPoints()>PlayerPrefs.GetInt(prefArray[i], 0) && i<5)
+        {
+            if (i != 0) PlayerPrefs.SetInt(prefArray[i - 1], PlayerPrefs.GetInt(prefArray[i]));
+
+            PlayerPrefs.SetInt(prefArray[i], (int)getPoints());
+            i++;
+        }    
     }
 
     public void addHit()

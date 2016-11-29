@@ -17,6 +17,10 @@ public class NewGame : MonoBehaviour {
     {
 
         PlayerPrefs.SetInt("HighScore", 0);
+        PlayerPrefs.SetInt("HighScore2", 0);
+        PlayerPrefs.SetInt("HighScore3", 0);
+        PlayerPrefs.SetInt("HighScore4", 0);
+        PlayerPrefs.SetInt("HighScore5", 0);
         text.gameObject.SetActive(true);
     }
 
@@ -26,9 +30,21 @@ public class NewGame : MonoBehaviour {
         SceneManager.LoadScene("Rules");
     }
 
+    public void loadHSTable()
+    {
+
+        SceneManager.LoadScene("HSTable");
+    }
+
     public void goBack()
     {
 
         SceneManager.LoadScene("Game Start");
+    }
+
+    public void backToMainMenu()
+    {
+
+        SceneManager.LoadScene("Main Menu");
     }
 }
