@@ -22,7 +22,7 @@ public class PlayerScript : MonoBehaviour {
     private ScreenShake shake;
     private float timeLeft;
     public Text score, time, highScore;
-    public GameObject boom, background, rapid, rifle, dead, distanceShooter, remover;
+    public GameObject background, rapid, rifle, dead, distanceShooter, remover;
     private GameObject target;
     private AudioClip[] sounds, sadsounds;
     private List<float> hitTimes = new List<float>();
@@ -61,6 +61,8 @@ public class PlayerScript : MonoBehaviour {
         {
             "HighScore5", "HighScore4", "HighScore3", "HighScore2", "HighScore"
         };
+
+        if (PlayerPrefs.GetInt("Mute")==1) AudioListener.volume = 0;
     }
 
     // Update is called once per frame
@@ -123,9 +125,14 @@ public class PlayerScript : MonoBehaviour {
             {
                 PlayerPrefs.SetFloat("Volume", AudioListener.volume);
                 AudioListener.volume = 0;
+                PlayerPrefs.SetInt("Mute", 1);
             }
 
-            else AudioListener.volume = PlayerPrefs.GetFloat("Volume");
+            else
+            {
+                AudioListener.volume = PlayerPrefs.GetFloat("Volume");
+                PlayerPrefs.SetInt("Mute", 0);
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
@@ -454,8 +461,8 @@ public class PlayerScript : MonoBehaviour {
 
     void endGame()
     {
+        PlayerPrefs.SetInt("FromHS", 0);
         SceneManager.LoadScene("Main Menu");
-        boom.GetComponent<AudioSource>().Play();
         var i = 0;
 
         PlayerPrefs.SetInt("lastScore", (int)getPoints());

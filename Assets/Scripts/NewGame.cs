@@ -29,6 +29,21 @@ public class NewGame : MonoBehaviour {
         SceneManager.LoadScene("Rules");
     }
 
+    public void loadRules()
+    {
+        SceneManager.LoadScene("Rules");
+    }
+
+    public void loadSpecial()
+    {
+        SceneManager.LoadScene("Special");
+    }
+
+    public void loadControls()
+    {
+        SceneManager.LoadScene("Controls");
+    }
+
     public void loadHSTable()
     {
 
@@ -40,15 +55,9 @@ public class NewGame : MonoBehaviour {
         SceneManager.LoadScene("Game Start");
     }
 
-    public void backToMainMenu()
+    public void mainMenuFromHS()
     {
-
         SceneManager.LoadScene("Main Menu");
-    }
-
-    public void resumeGame()
-    {
-        SceneManager.LoadScene("Level1");
-
+        PlayerPrefs.SetInt("FromHS", 1);
     }
 }
