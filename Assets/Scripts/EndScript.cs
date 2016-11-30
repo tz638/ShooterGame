@@ -4,13 +4,11 @@ using System.Collections;
 public class EndScript : MonoBehaviour {
 
     public UnityEngine.UI.Text highScore;
-    //private PlayerScript player;
 
 	// Use this for initialization
 	void Start () {
-
-        //player= (PlayerScript)FindObjectOfType(typeof(PlayerScript));
-        highScore.text = "Your highscore is " + PlayerPrefs.GetInt("HighScore")+".";
+        
+        highScore.text = "Last score: " + PlayerPrefs.GetInt("lastScore") +". Highscore: "+ PlayerPrefs.GetInt("HighScore")+".";
 
     }
 	

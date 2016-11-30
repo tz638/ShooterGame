@@ -37,7 +37,7 @@ public class BullsEyeScript : MonoBehaviour {
         character.tryFreeze();
 
         /* Check if necessary to activate Dead Shot */
-        if (character.getHits() == 7 && character.getHits() == character.getShots() && character.hasRifle()==0)
+        if (character.getHits() ==7 && character.getHits() == character.getShots() && character.hasRifle()==0)
         {
             character.removeGun();
             character.deadShot();

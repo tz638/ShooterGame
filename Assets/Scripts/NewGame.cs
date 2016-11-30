@@ -24,9 +24,8 @@ public class NewGame : MonoBehaviour {
         text.gameObject.SetActive(true);
     }
 
-    public void loadRules()
+    public void loadRulesFromStart()
     {
-
         SceneManager.LoadScene("Rules");
     }
 
@@ -38,7 +37,6 @@ public class NewGame : MonoBehaviour {
 
     public void goBack()
     {
-
         SceneManager.LoadScene("Game Start");
     }
 
@@ -46,5 +44,11 @@ public class NewGame : MonoBehaviour {
     {
 
         SceneManager.LoadScene("Main Menu");
+    }
+
+    public void resumeGame()
+    {
+        SceneManager.LoadScene("Level1");
+
     }
 }

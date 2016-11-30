@@ -40,12 +40,12 @@ public class WallMovement : MonoBehaviour {
             else if (down < 0 && down > -0.035) down = -0.05f;
         }
         
-        if (player.getFreeze() == 0)
+        if (player.getFreeze() == 0 && player.paused==0 && player.controls == 0)
         {
             transform.Translate(down * Vector3.down);
         }
 
-        else transform.gameObject.SetActive(false);  
+        else if (player.getFreeze() == 1 && player.paused == 0 && player.controls == 0) transform.gameObject.SetActive(false);  
     }
 
 }

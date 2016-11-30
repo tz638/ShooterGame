@@ -12,7 +12,7 @@ public class Boundary
 
 public class PlayerScript : MonoBehaviour {
 
-    public int freeze=0;
+    public int freeze=0, paused=0, controls=0;
     private int points, extra = 1, hits = 0, shots = 0, dHits = 0, hasrifle=0;
     public float speed, loader, timeChange, slowDown=1;
     private float distance, freezeTime=0;
@@ -27,6 +27,7 @@ public class PlayerScript : MonoBehaviour {
     private AudioClip[] sounds, sadsounds;
     private List<float> hitTimes = new List<float>();
     private string[] prefArray;
+    public Canvas rulesCanvas, properCanvas, controlsCanvas;
 
     // Use this for initialization
     void Start () {
@@ -83,6 +84,74 @@ public class PlayerScript : MonoBehaviour {
         }
 
         if (freeze == 0) wall.gameObject.SetActive(true);
+
+        commandListener();
+    }
+
+    public void commandListener()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            if (controls == 1) return;
+
+            if (rulesCanvas.gameObject.activeSelf)
+            {
+                rulesCanvas.gameObject.SetActive(false);
+                Time.timeScale = 1;
+                properCanvas.GetComponent<AudioSource>().UnPause();
+                background.GetComponent<AudioSource>().UnPause();
+                paused = 0;
+            }
+            else
+            {
+                rulesCanvas.gameObject.SetActive(true);
+                Time.timeScale = 0;
+                properCanvas.GetComponent<AudioSource>().Pause();
+                background.GetComponent<AudioSource>().Pause();
+                paused = 1;
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.N) && paused == 0 && controls == 0)
+        {
+            SceneManager.LoadScene("Level1");
+        }
+
+        if (Input.GetKeyDown(KeyCode.M) && paused == 0 && controls == 0)
+        {
+            if (AudioListener.volume != 0)
+            {
+                PlayerPrefs.SetFloat("Volume", AudioListener.volume);
+                AudioListener.volume = 0;
+            }
+
+            else AudioListener.volume = PlayerPrefs.GetFloat("Volume");
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
+        {
+            if (paused == 1) return;
+
+            if (controlsCanvas.gameObject.activeSelf)
+            {
+                controlsCanvas.gameObject.SetActive(false);
+                Time.timeScale = 1;
+                properCanvas.GetComponent<AudioSource>().UnPause();
+                background.GetComponent<AudioSource>().UnPause();
+                controls = 0;
+            }
+            else
+            {
+                controlsCanvas.gameObject.SetActive(true);
+                Time.timeScale = 0;
+                properCanvas.GetComponent<AudioSource>().Pause();
+                background.GetComponent<AudioSource>().Pause();
+                controls = 1;
+            }
+        }
+
+
+
     }
 
     public void incrementHits()
@@ -387,10 +456,11 @@ public class PlayerScript : MonoBehaviour {
     {
         SceneManager.LoadScene("Main Menu");
         boom.GetComponent<AudioSource>().Play();
-        var high = PlayerPrefs.GetInt("HighScore", 0);
         var i = 0;
 
-        while ((int)getPoints()>PlayerPrefs.GetInt(prefArray[i], 0) && i<5)
+        PlayerPrefs.SetInt("lastScore", (int)getPoints());
+
+        while (i < 5 && (int)getPoints()>PlayerPrefs.GetInt(prefArray[i], 0))
         {
             if (i != 0) PlayerPrefs.SetInt(prefArray[i - 1], PlayerPrefs.GetInt(prefArray[i]));
 
